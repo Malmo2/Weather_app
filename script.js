@@ -34,7 +34,7 @@ async function checkWeather(query) {
 }
 
 searchBtn.addEventListener("click", () => {
-  const query = input.value.trim() || "59.3293,18.0686";
+  const query = input.value.trim() || "Stockholm";
   checkWeather(query);
 });
 
