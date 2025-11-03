@@ -1,15 +1,49 @@
-/*   const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&models=dmi_seamless";
-  async function checkWeather(){
+const API_KEY = "37cf80aeb0724a5f8bd81720250311";
+
+const searchBtn = document.getElementById("searchBtn");
+const input = document.querySelector(".search input");
+const weatherIcon = document.querySelector(".weather-icon");
+const cityEl = document.querySelector(".city");
+const tempEl = document.querySelector(".temp");
+const windEl = document.querySelector(".wind");
+const humidityEl = document.querySelector(".humidity");
+
+async function checkWeather(q) {
+  try {
+    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(q)}&aqi=no`;
     const response = await fetch(apiUrl);
-    var data = await response.json();
+    if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
 
-    console.log(data)
+    const data = await response.json();
+    console.log("WeatherAPI data:", data);
 
-   // document.querySelector(".city").innerHTML = data. + 
-   document.querySelector(".temp").innerHTML = data.hourly_units.temperature_2m;
-   document.querySelector(".wind").innerHTML = data.hourly_units.wind_speed_10m + "km/h";
-   document.querySelector(".humidity").innerHTML = data.hourly_units.relative_humidity_2m + "%";
+    cityEl.textContent = `${data.location.name}, ${data.location.country}`;
+    tempEl.textContent = `${Math.round(data.current.temp_c)}°C`;
+    windEl.textContent = `${Math.round(data.current.wind_kph)} km/h`;
+    humidityEl.textContent = `${data.current.humidity}%`;
 
+    const condition = data.current.condition.text.toLowerCase();
+    if (condition.includes("rain")) weatherIcon.src = "images/rain.png";
+    else if (condition.includes("cloud")) weatherIcon.src = "images/clouds.png";
+    else if (condition.includes("snow")) weatherIcon.src = "images/snow.png";
+    else if (condition.includes("mist") || condition.includes("fog")) weatherIcon.src = "images/mist.png";
+    else weatherIcon.src = "images/clear.png";
+  } catch (err) {
+    console.error("Could not fetch data.", err.message);
   }
+}
 
-  checkWeather(); */
+searchBtn.addEventListener("click", () => {
+  const q = input.value.trim() || "59.3293,18.0686";
+  checkWeather(q);
+});
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const q = input.value.trim() || "59.3293,18.0686";
+    checkWeather(q);
+  }
+});
+
+// initial load: Stockholm coords
+checkWeather("59.3293,18.0686");
