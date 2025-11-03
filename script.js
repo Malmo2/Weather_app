@@ -3,10 +3,10 @@ const API_KEY = "37cf80aeb0724a5f8bd81720250311";
 const searchBtn = document.getElementById("searchBtn");
 const input = document.querySelector(".search input");
 const weatherIcon = document.querySelector(".weather-icon");
-const cityEl = document.querySelector(".city");
-const tempEl = document.querySelector(".temp");
-const windEl = document.querySelector(".wind");
-const humidityEl = document.querySelector(".humidity");
+const cityInput = document.querySelector(".city");
+const tempInput = document.querySelector(".temp");
+const windInput = document.querySelector(".wind");
+const humidityInput = document.querySelector(".humidity");
 
 async function checkWeather(q) {
   try {
@@ -17,10 +17,10 @@ async function checkWeather(q) {
     const data = await response.json();
     console.log("WeatherAPI data:", data);
 
-    cityEl.textContent = `${data.location.name}, ${data.location.country}`;
-    tempEl.textContent = `${Math.round(data.current.temp_c)}°C`;
-    windEl.textContent = `${Math.round(data.current.wind_kph)} km/h`;
-    humidityEl.textContent = `${data.current.humidity}%`;
+    cityInput.textContent = `${data.location.name}, ${data.location.country}`;
+    tempInput.textContent = `${Math.round(data.current.temp_c)}°C`;
+    windInput.textContent = `${Math.round(data.current.wind_kph)} km/h`;
+    humidityInput.textContent = `${data.current.humidity}%`;
 
     const condition = data.current.condition.text.toLowerCase();
     if (condition.includes("rain")) weatherIcon.src = "images/rain.png";
