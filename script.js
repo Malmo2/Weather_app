@@ -22,7 +22,7 @@ async function checkWeather(query) {
     windInput.textContent = `${data.current.wind_kph} km/h`;
     humidityInput.textContent = `${data.current.humidity}%`;
 
-    const weatherCondition = data.current.weatherCondition.text.toLowerCase();
+    const weatherCondition = data.current.condition.text.toLowerCase();
     if (weatherCondition.includes("rain")) weatherIcon.src = "images/rain.png";
     else if (weatherCondition.includes("cloud")) weatherIcon.src = "images/clouds.png";
     else if (weatherCondition.includes("snow")) weatherIcon.src = "images/snow.png";
