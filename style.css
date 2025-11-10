@@ -18,6 +18,8 @@ body {
   border-radius: 20px;
   padding: 40px 35px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .search {
@@ -95,61 +97,85 @@ body {
   margin-top: -6px;
 }
 
-.search-history {
-  margin-top: 18px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
+/* --- History block --- */
+.history-section {
+  margin-top: auto; /* push to bottom */
+  border-top: 1px solid rgba(255,255,255,0.25);
+  padding-top: 18px;
+  text-align: center;
 }
 
-.history-btn {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.28);
-  background: rgba(255,255,255,0.12);
+.history-section h3 {
+  font-size: 18px;
+  font-weight: 500;
   color: #fff;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* Grid of mini-cards (last 3 searches) */
+.history-detailed {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  text-align: left;
+}
+
+/* 3 across on tablet+ */
+@media (min-width: 768px) {
+  .history-detailed {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mini-card */
+.history-card {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 12px;
+  padding: 12px;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
   transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.history-btn:hover {
-  background: rgba(255,255,255,0.18);
-  border-color: rgba(255,255,255,0.38);
-}
-
-.history-btn:active {
-  transform: translateY(1px);
-}
-
-.history-btn:focus-visible {
-  outline: 2px solid #ebfffc;
-  outline-offset: 2px;
-}
-
-.clear-history {
-  appearance: none;
-  border: 0;
-  background: #ebfffc;
-  color: #333;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 1;
   cursor: pointer;
-  margin-left: auto;       
-  transition: filter 0.2s ease, transform 0.06s ease;
 }
 
-.clear-history:hover {
-  filter: brightness(0.95);
+.history-card:hover {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(255,255,255,0.26);
 }
 
-.clear-history:active {
-  transform: translateY(1px);
+.history-card:active {
+  transform: scale(0.98);
+}
+
+/* Header row inside mini-card */
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.history-city {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.history-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+}
+
+/* Rows of details */
+.history-rows p {
+  margin: 3px 0;
+  font-size: 13px;
+  line-height: 1.25;
+  opacity: 0.95;
 }
 
 
@@ -175,11 +201,6 @@ body {
     justify-content: center;
   }
 
-  .search-history { gap: 12px; 
-  }
-
-  .history-btn, .clear-history { font-size: 15px; 
-  }
 }
 
 @media (min-width: 768px) {
