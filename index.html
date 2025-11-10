@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Weather_Now</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <div class="card">
     <div class="search">
-      <input type="text" placeholder="enter city name" spellcheck="false">
-      <button id="searchBtn"><img src="images/search.png"></button>
+      <input
+        type="text"
+        placeholder="enter city name"
+        spellcheck="false"
+        aria-label="City or coordinates"
+        autocomplete="off"
+      />
+      <button id="searchBtn" type="button" aria-label="Search">
+        <img src="images/search.png" alt="Search" />
+      </button>
     </div>
+
     <div class="weather">
-      <img src="images/rain.png" class=" weather-icon">
+      <img src="images/rain.png" class="weather-icon" alt="Weather icon" />
       <h1 class="temp">22°C</h1>
       <h2 class="city">Santiago</h2>
+
       <div class="details">
         <div class="col">
-          <img src="images/humidity.png">
+          <img src="images/humidity.png" alt="Humidity icon" />
           <div>
             <p class="humidity">50%</p>
             <p>Humidity</p>
           </div>
         </div>
+
         <div class="col">
-          <img src="images/wind.png">
+          <img src="images/wind.png" alt="Wind icon" />
           <div>
             <p class="wind">15km/h</p>
             <p>Wind Speed</p>
@@ -35,10 +44,15 @@
         </div>
       </div>
     </div>
+
+    <!-- History with full details (JS fills #historyList) -->
+    <div class="history-section">
+      <h3>History</h3>
+      <div class="history-detailed" id="historyList"></div>
+    </div>
   </div>
   <div id="results"></div>
 
   <script src="script.js"></script>
 </body>
-
 </html>
