@@ -95,6 +95,64 @@ body {
   margin-top: -6px;
 }
 
+.search-history {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.history-btn {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.history-btn:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.38);
+}
+
+.history-btn:active {
+  transform: translateY(1px);
+}
+
+.history-btn:focus-visible {
+  outline: 2px solid #ebfffc;
+  outline-offset: 2px;
+}
+
+.clear-history {
+  appearance: none;
+  border: 0;
+  background: #ebfffc;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;       
+  transition: filter 0.2s ease, transform 0.06s ease;
+}
+
+.clear-history:hover {
+  filter: brightness(0.95);
+}
+
+.clear-history:active {
+  transform: translateY(1px);
+}
+
+
 @media (min-width: 480px) {
   .card {
     padding: 30px 20px;
@@ -115,6 +173,12 @@ body {
 
   .col {
     justify-content: center;
+  }
+
+  .search-history { gap: 12px; 
+  }
+
+  .history-btn, .clear-history { font-size: 15px; 
   }
 }
 
