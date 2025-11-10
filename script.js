@@ -67,9 +67,6 @@ function saveHistory(entry) {
   );
 
 
-  searchHistory.unshift(entry);
-  if (searchHistory.length > 10) searchHistory.length = 10;
-
   // Add to front and limit to 10
   searchHistory.unshift(entry);
   if (searchHistory.length > 10) searchHistory.length = 10;
