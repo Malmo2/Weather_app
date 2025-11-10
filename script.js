@@ -1,4 +1,5 @@
 const API_KEY = "37cf80aeb0724a5f8bd81720250311";
+
 const searchBtn = document.getElementById("searchBtn");
 const input = document.querySelector(".search input");
 const weatherIcon = document.querySelector(".weather-icon");
@@ -6,14 +7,17 @@ const cityInput = document.querySelector(".city");
 const tempInput = document.querySelector(".temp");
 const windInput = document.querySelector(".wind");
 const humidityInput = document.querySelector(".humidity");
+const detailsSection = document.querySelector(".details");
+const historySection = document.querySelector(".history-section");
 const historyList = document.getElementById("historyList");
-
 const clearBtn = document.getElementById("clearHistoryBtn");
 
-let searchHistory = JSON.parse(localStorage.getItem("searchHistoryFull")) || [];
+// Clear history on page load (reset on refresh)
+localStorage.removeItem("searchHistoryFull");
+let searchHistory = [];
+let errorTimerId = null;
 
 /* ---------------- ICON PICKER ---------------- */
-
 function pickIcon(conditionText = "") {
   const t = conditionText.toLowerCase();
   if (t.includes("thunder")) return "images/thunder.png";
@@ -24,25 +28,36 @@ function pickIcon(conditionText = "") {
   return "images/clear.png";
 }
 
+/* ---------------- FETCH + UPDATE ---------------- */
 async function checkWeather(query) {
   try {
+    hideError();
+    hideWelcome();
+    if (!query) throw new Error("Please enter a city name.");
+
     const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(query)}&aqi=no`;
     const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error("Could not fetch data");
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const msg = errData?.error?.message || "City not found.";
+      throw new Error(msg);
+    }
+
     const data = await res.json();
 
-    console.log(data);
-    // --- Update main weather UI ---
+    // Show icon and details section
+    weatherIcon.style.display = "block";
+    if (detailsSection) detailsSection.style.display = "flex";
 
+    // Update UI
     cityInput.textContent = `${data.location.name}, ${data.location.country}`;
     tempInput.textContent = `${Math.round(data.current.temp_c)}°C`;
     windInput.textContent = `${Math.round(data.current.wind_kph)} km/h`;
     humidityInput.textContent = `${data.current.humidity}%`;
     weatherIcon.src = pickIcon(data.current.condition.text);
 
-
-    
-    // --- Save full history entry & update UI ---
+    // Save to history
     saveHistory({
       name: data.location.name,
       country: data.location.country,
@@ -51,11 +66,56 @@ async function checkWeather(query) {
       humidity: data.current.humidity,
       condition: data.current.condition.text,
     });
+
+    // Reset input after success
+    input.value = "";
+    input.blur();
+
   } catch (err) {
-    console.error("Could not fetch data.", err.message);
+    console.error("Weather fetch error:", err.message);
+    showError(err.message || "City not found.");
   }
 }
 
+/* ---------------- ERROR DISPLAY ---------------- */
+function showError(message) {
+  // Hide icon, details section, and reset weather fields
+  weatherIcon.style.display = "none";
+  if (detailsSection) detailsSection.style.display = "none";
+  cityInput.textContent = "";
+  tempInput.textContent = "";
+  windInput.textContent = "";
+  humidityInput.textContent = "";
+
+  // Create or reuse error element
+  let errEl = document.querySelector(".error-message");
+  if (!errEl) {
+    errEl = document.createElement("p");
+    errEl.className = "error-message";
+    document.querySelector(".weather")?.appendChild(errEl);
+  }
+
+  // Apply text and animation class
+  errEl.textContent = message || "City not found.";
+  errEl.classList.add("show");
+
+  // Fade out automatically
+  if (errorTimerId) clearTimeout(errorTimerId);
+  errorTimerId = setTimeout(() => {
+    errEl.classList.remove("show");
+  }, 3000);
+}
+
+function hideError() {
+  const errEl = document.querySelector(".error-message");
+  if (errorTimerId) clearTimeout(errorTimerId);
+  if (errEl) errEl.classList.remove("show");
+}
+
+function hideWelcome() {
+  const welcomeEl = document.querySelector(".welcome-message");
+  if (welcomeEl) welcomeEl.classList.remove("show");
+}
 
 /* ---------------- HISTORY ---------------- */
 function saveHistory(entry) {
@@ -63,45 +123,47 @@ function saveHistory(entry) {
 
   const key = `${entry.name}|${entry.country}`.toLowerCase();
   searchHistory = searchHistory.filter(
-    (e) => `${e.name}|${e.country}`.toLowerCase() !== key
+    e => `${e.name}|${e.country}`.toLowerCase() !== key
   );
 
-
   searchHistory.unshift(entry);
   if (searchHistory.length > 10) searchHistory.length = 10;
 
-  // Add to front and limit to 10
-  searchHistory.unshift(entry);
-  if (searchHistory.length > 10) searchHistory.length = 10;
-  // Save to localStorage
-  
   localStorage.setItem("searchHistoryFull", JSON.stringify(searchHistory));
   renderHistory();
 }
+
 function renderHistory() {
   if (!historyList) return;
   historyList.innerHTML = "";
 
-
   if (searchHistory.length === 0) {
-    historyList.innerHTML = `<p class="no-history">No recent searches</p>`;
+    // Hide history section when no searches
+    if (historySection) historySection.style.display = "none";
     return;
   }
 
-  // Show only last 3 searches
-  searchHistory.slice(0, 3).forEach((e) => {
+  // Show history section when there are searches
+  if (historySection) historySection.style.display = "block";
+
+  searchHistory.slice(0, 3).forEach(e => {
     const card = document.createElement("div");
     card.className = "history-card";
+
     const head = document.createElement("div");
     head.className = "history-head";
+
     const city = document.createElement("p");
     city.className = "history-city";
     city.textContent = `${e.name}, ${e.country}`;
+
     const icon = document.createElement("img");
     icon.className = "history-icon";
     icon.src = pickIcon(e.condition);
     icon.alt = e.condition;
+
     head.append(city, icon);
+
     const rows = document.createElement("div");
     rows.className = "history-rows";
     rows.innerHTML = `
@@ -110,14 +172,13 @@ function renderHistory() {
       <p>Humidity: ${e.humidity}%</p>
       <p>Condition: ${e.condition}</p>
     `;
+
     card.append(head, rows);
-
-
-    // Clicking the history card re-loads that city
 
     card.addEventListener("click", () => {
       checkWeather(`${e.name}, ${e.country}`);
     });
+
     historyList.appendChild(card);
   });
 }
@@ -129,31 +190,41 @@ function clearHistory() {
 }
 
 /* ---------------- EVENTS ---------------- */
-
-// ----------------- EVENT LISTENERS -----------------
 searchBtn.addEventListener("click", () => {
-  const query = input.value.trim() || "Stockholm";
+  const query = input.value.trim();
   checkWeather(query);
 });
+
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const query = input.value.trim() || "Stockholm";
+    const query = input.value.trim();
     checkWeather(query);
   }
 });
 
-// --- Initial load: Stockholm ---
-(async () => {
-  const d = await checkWeather("59.3293,18.0686");
-  renderCard(d);
-})();
-
-
-
-
-
 clearBtn?.addEventListener("click", clearHistory);
 
-// ----------------- INITIAL LOAD -----------------
-checkWeather("Stockholm");
+/* ---------------- INITIAL LOAD ---------------- */
+// Show welcome message on initial load
+function showWelcome() {
+  weatherIcon.style.display = "none";
+  if (detailsSection) detailsSection.style.display = "none";
+  cityInput.textContent = "";
+  tempInput.textContent = "";
+  windInput.textContent = "";
+  humidityInput.textContent = "";
+  
+  // Create welcome message element
+  let welcomeEl = document.querySelector(".welcome-message");
+  if (!welcomeEl) {
+    welcomeEl = document.createElement("p");
+    welcomeEl.className = "welcome-message";
+    document.querySelector(".weather")?.appendChild(welcomeEl);
+  }
+  
+  welcomeEl.textContent = "Welcome! Search for your city.";
+  welcomeEl.classList.add("show");
+}
+
+showWelcome();
 renderHistory();
