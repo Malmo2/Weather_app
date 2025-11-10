@@ -7,33 +7,41 @@ const tempInput = document.querySelector(".temp");
 const windInput = document.querySelector(".wind");
 const humidityInput = document.querySelector(".humidity");
 const historyList = document.getElementById("historyList");
-// Load saved history (with full data) or create empty array
+
+const clearBtn = document.getElementById("clearHistoryBtn");
+
 let searchHistory = JSON.parse(localStorage.getItem("searchHistoryFull")) || [];
-// ----------------- ICON PICKER -----------------
+
+/* ---------------- ICON PICKER ---------------- */
+
 function pickIcon(conditionText = "") {
   const t = conditionText.toLowerCase();
-  if (t.includes("rain")) return "images/rain.png";
-  if (t.includes("cloud")) return "images/clouds.png";
+  if (t.includes("thunder")) return "images/thunder.png";
   if (t.includes("snow")) return "images/snow.png";
-  if (t.includes("mist") || t.includes("fog")) return "images/mist.png";
+  if (t.includes("rain") || t.includes("drizzle") || t.includes("shower")) return "images/rain.png";
+  if (t.includes("mist") || t.includes("fog") || t.includes("haze")) return "images/mist.png";
+  if (t.includes("cloud") || t.includes("overcast") || t.includes("partly")) return "images/clouds.png";
   return "images/clear.png";
 }
-// ----------------- MAIN FETCH -----------------
+
 async function checkWeather(query) {
   try {
-    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(
-      query
-    )}&aqi=no`;
+    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(query)}&aqi=no`;
     const res = await fetch(apiUrl);
     if (!res.ok) throw new Error("Could not fetch data");
     const data = await res.json();
+
     console.log(data);
     // --- Update main weather UI ---
+
     cityInput.textContent = `${data.location.name}, ${data.location.country}`;
-    tempInput.textContent = `${data.current.temp_c}°C`;
-    windInput.textContent = `${data.current.wind_kph} km/h`;
+    tempInput.textContent = `${Math.round(data.current.temp_c)}°C`;
+    windInput.textContent = `${Math.round(data.current.wind_kph)} km/h`;
     humidityInput.textContent = `${data.current.humidity}%`;
     weatherIcon.src = pickIcon(data.current.condition.text);
+
+
+    
     // --- Save full history entry & update UI ---
     saveHistory({
       name: data.location.name,
@@ -47,24 +55,39 @@ async function checkWeather(query) {
     console.error("Could not fetch data.", err.message);
   }
 }
-// ----------------- HISTORY FUNCTIONS -----------------
+
+
+/* ---------------- HISTORY ---------------- */
 function saveHistory(entry) {
   if (!entry || !entry.name) return;
-  // Remove duplicates (case-insensitive)
+
   const key = `${entry.name}|${entry.country}`.toLowerCase();
   searchHistory = searchHistory.filter(
     (e) => `${e.name}|${e.country}`.toLowerCase() !== key
   );
+
+
+  searchHistory.unshift(entry);
+  if (searchHistory.length > 10) searchHistory.length = 10;
+
   // Add to front and limit to 10
   searchHistory.unshift(entry);
   if (searchHistory.length > 10) searchHistory.length = 10;
   // Save to localStorage
+  
   localStorage.setItem("searchHistoryFull", JSON.stringify(searchHistory));
   renderHistory();
 }
 function renderHistory() {
   if (!historyList) return;
   historyList.innerHTML = "";
+
+
+  if (searchHistory.length === 0) {
+    historyList.innerHTML = `<p class="no-history">No recent searches</p>`;
+    return;
+  }
+
   // Show only last 3 searches
   searchHistory.slice(0, 3).forEach((e) => {
     const card = document.createElement("div");
@@ -88,13 +111,25 @@ function renderHistory() {
       <p>Condition: ${e.condition}</p>
     `;
     card.append(head, rows);
+
+
     // Clicking the history card re-loads that city
+
     card.addEventListener("click", () => {
       checkWeather(`${e.name}, ${e.country}`);
     });
     historyList.appendChild(card);
   });
 }
+
+function clearHistory() {
+  localStorage.removeItem("searchHistoryFull");
+  searchHistory = [];
+  renderHistory();
+}
+
+/* ---------------- EVENTS ---------------- */
+
 // ----------------- EVENT LISTENERS -----------------
 searchBtn.addEventListener("click", () => {
   const query = input.value.trim() || "Stockholm";
@@ -106,6 +141,19 @@ input.addEventListener("keydown", (e) => {
     checkWeather(query);
   }
 });
+
+// --- Initial load: Stockholm ---
+(async () => {
+  const d = await checkWeather("59.3293,18.0686");
+  renderCard(d);
+})();
+
+
+
+
+
+clearBtn?.addEventListener("click", clearHistory);
+
 // ----------------- INITIAL LOAD -----------------
 checkWeather("Stockholm");
 renderHistory();
