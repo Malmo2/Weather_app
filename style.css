@@ -6,15 +6,15 @@
   font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+
 :root {
   --bg: #222;
   --text: #fff;
-  --card-grad: linear-gradient(135deg, #00feba, #5b548a);
+  --card-grad: linear-gradient(135deg, #00FEBA, #5B548A);
   --glass-bg: rgba(0, 0, 0, 0.18);
   --glass-bd: rgba(255, 255, 255, 0.18);
   --bd-light: rgba(255, 255, 255, 0.25);
 }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -23,7 +23,6 @@ body {
   place-items: start center; /* top-centered on mobile */
   padding: 16px;
 }
-
 .card {
   width: 100%;
   max-width: 480px;
@@ -43,7 +42,6 @@ body {
   align-items: center;
   gap: 8px;
 }
-
 .search input {
   flex: 1;
   height: 48px;
@@ -55,7 +53,6 @@ body {
   font-size: 16px;
   padding: 10px 14px;
 }
-
 .search button {
   width: 48px;
   height: 48px;
@@ -67,7 +64,6 @@ body {
   display: grid;
   place-items: center;
 }
-
 .search button img {
   width: 16px;
   height: 16px;
@@ -103,7 +99,6 @@ body {
   gap: 12px;
   align-items: stretch;
 }
-
 .col {
   display: flex;
   gap: 10px;
@@ -111,12 +106,10 @@ body {
   justify-content: center;
   text-align: left;
 }
-
 .col img {
   width: 28px;
   height: 28px;
 }
-
 .humidity,
 .wind {
   font-size: 18px;
@@ -130,7 +123,6 @@ body {
   padding-top: 14px;
   text-align: center;
 }
-
 .history-section h3 {
   font-size: 16px;
   font-weight: 600;
@@ -169,13 +161,11 @@ body {
   gap: 8px;
   margin-bottom: 6px;
 }
-
 .history-city {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
 }
-
 .history-icon {
   width: 36px;
   height: 36px;
@@ -239,7 +229,6 @@ body {
 
   .history-icon { width: 40px; height: 40px; }
 }
-
 @media (min-width: 768px) {
   body { place-items: center; } /* center card vertically on larger screens */
 
