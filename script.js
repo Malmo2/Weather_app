@@ -1,12 +1,12 @@
 const API_KEY = "37cf80aeb0724a5f8bd81720250311";
-
 const searchBtn = document.getElementById("searchBtn");
 const input = document.querySelector(".search input");
-const weatherIcon = document.querySelector(".weather-icon");
+const weatherIcon = document.querySelector(".weather-icon"); // main big icon (optional)
 const cityInput = document.querySelector(".city");
 const tempInput = document.querySelector(".temp");
 const windInput = document.querySelector(".wind");
 const humidityInput = document.querySelector(".humidity");
+
 const historyList = document.getElementById("historyList");
 const clearBtn = document.getElementById("clearHistoryBtn");
 
@@ -23,7 +23,11 @@ function pickIcon(conditionText = "") {
   return "images/clear.png";
 }
 
+<<<<<<< HEAD
 /* ---------------- FETCH ---------------- */
+=======
+
+>>>>>>> c88d08fe8901a29427c1c9aff8ff52c5e7ab9e67
 async function checkWeather(query) {
   try {
     const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(query)}&aqi=no`;
@@ -48,8 +52,36 @@ async function checkWeather(query) {
       humidity: data.current.humidity,
       condition: data.current.condition.text,
     });
+    
+const results = document.getElementById("results");
+// --- Icon resolver (returns a relative image path) ---
+function pickIcon(conditionText = "") {
+  const t = String(conditionText).toLowerCase();
+  if (t.includes("snow")) return "images/snow.png";
+  if (t.includes("rain") || t.includes("drizzle")) return "images/rain.png";
+  if (t.includes("thunder")) return "images/thunder.png";
+  if (t.includes("mist") || t.includes("fog") || t.includes("haze")) return "images/mist.png";
+  if (t.includes("cloud")) return "images/clouds.png";
+  return "images/clear.png";
+}
+// --- Fetch current weather and return parsed data ---
+async function checkWeather(q) {
+  try {
+    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(q)}&aqi=no`;
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    const data = await response.json();
+    // Update the main hero values if those nodes exist
+    if (cityInput) cityInput.textContent = `${data.location.name}, ${data.location.country}`;
+    if (tempInput) tempInput.textContent = `${Math.round(data.current.temp_c)}°C`;
+    if (windInput) windInput.textContent = `${Math.round(data.current.wind_kph)} km/h`;
+    if (humidityInput) humidityInput.textContent = `${data.current.humidity}%`;
+    if (weatherIcon) weatherIcon.src = pickIcon(data.current.condition.text);
+    return data; // <-- critical for renderCard()
+
   } catch (err) {
     console.error("Could not fetch data.", err.message);
+    return null;
   }
 }
 
@@ -126,13 +158,27 @@ searchBtn.addEventListener("click", () => {
   const query = input.value.trim() || "Stockholm";
   checkWeather(query);
 });
-
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const query = input.value.trim() || "Stockholm";
-    checkWeather(query);
+// --- Optional: Enter key triggers search ---
+// input.addEventListener("keydown", async (e) => {
+//   if (e.key === "Enter") searchBtn.click();
+// });
+// --- Optional: Clear history button safety guard (only if you actually implemented history) ---
+document.getElementById("clearHistoryBtn")?.addEventListener("click", () => {
+  if (typeof displayHistory === "function") {
+    localStorage.removeItem("searchHistory");
+    window.searchHistory = [];
+    displayHistory();
   }
 });
+// --- Initial load: Stockholm ---
+(async () => {
+  const d = await checkWeather("59.3293,18.0686");
+  renderCard(d);
+})();
+
+
+
+
 
 clearBtn?.addEventListener("click", clearHistory);
 
