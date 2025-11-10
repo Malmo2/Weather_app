@@ -1,227 +1,202 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: "Poppins", sans-serif;
   box-sizing: border-box;
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
-
+:root {
+  --bg: #222;
+  --text: #fff;
+  --card-grad: linear-gradient(135deg, #00FEBA, #5B548A);
+  --glass-bg: rgba(0, 0, 0, 0.18);
+  --glass-bd: rgba(255, 255, 255, 0.18);
+  --bd-light: rgba(255, 255, 255, 0.25);
+}
 body {
-  background: #222;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: grid;
+  place-items: start center; /* top-centered on mobile */
+  padding: 16px;
 }
-
 .card {
-  width: 90%;
-  max-width: 470px;
-  background: linear-gradient(135deg, #00feba, #5b548a);
-  color: #fff;
-  margin: 100px auto 0;
+  width: 100%;
+  max-width: 480px;
+  background: var(--card-grad);
   border-radius: 20px;
-  padding: 40px 35px;
-  text-align: center;
-  display: flex;
+  padding: 16px;
+  display: flex;            /* allow history to pin bottom */
   flex-direction: column;
+  gap: 16px;
+  text-align: center;
 }
-
+/* --- Search --- */
 .search {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
 }
-
 .search input {
-  border: 0;
-  outline: 0;
-  background: #ebfffc;
-  color: #555;
-  padding: 10px 25px;
-  height: 60px;
-  border-radius: 30px;
   flex: 1;
-  margin-right: 16px;
-  font-size: 18px;
-}
-
-.search button {
+  height: 48px;
   border: 0;
   outline: 0;
-  background: #ebfffc;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
+  border-radius: 24px;
+  background: #EBFFFC;
+  color: #555;
+  font-size: 16px;
+  padding: 10px 14px;
 }
-
+.search button {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  outline: 0;
+  border-radius: 50%;
+  background: #EBFFFC;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
 .search button img {
   width: 16px;
+  height: 16px;
 }
-
+/* --- Weather main --- */
 .weather-icon {
-  width: 170px;
-  margin-top: 30px;
+  width: 96px;
+  height: auto;
+  margin: 12px auto 0;
 }
-
-.weather h1 {
-  font-size: 80px;
+.weather .temp {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.05;
+  margin-top: 8px;
+}
+.weather .city {
+  font-size: 20px;
   font-weight: 500;
+  opacity: 0.95;
+  margin-top: 2px;
 }
-
-.weather h2 {
-  font-size: 45px;
-  font-weight: 400;
-  margin-top: -10px;
-}
-
+/* --- Details (stack on mobile) --- */
 .details {
+  margin-top: 16px;
+  padding: 0 4px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  margin-top: 50px;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
 }
-
 .col {
   display: flex;
+  gap: 10px;
   align-items: center;
+  justify-content: center;
   text-align: left;
 }
-
 .col img {
-  width: 40px;
-  margin-right: 10px;
+  width: 28px;
+  height: 28px;
 }
-
 .humidity,
 .wind {
-  font-size: 28px;
-  margin-top: -6px;
+  font-size: 18px;
+  margin-top: 0;
 }
-
-/* --- History block --- */
+/* --- History (full-detail mini cards) --- */
 .history-section {
-  margin-top: auto; /* push to bottom */
-  border-top: 1px solid rgba(255,255,255,0.25);
-  padding-top: 18px;
+  margin-top: auto;                 /* stick to bottom of card */
+  border-top: 1px solid var(--bd-light);
+  padding-top: 14px;
   text-align: center;
 }
-
 .history-section h3 {
-  font-size: 18px;
-  font-weight: 500;
-  color: #fff;
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  margin-bottom: 10px;
 }
-
-/* Grid of mini-cards (last 3 searches) */
+/* grid of mini-cards */
 .history-detailed {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr;       /* 1 column on mobile */
+  gap: 10px;
   text-align: left;
 }
-
-/* 3 across on tablet+ */
-@media (min-width: 768px) {
-  .history-detailed {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Mini-card */
+/* mini card */
 .history-card {
-  background: rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-bd);
   border-radius: 12px;
-  padding: 12px;
-  color: #fff;
+  padding: 10px;
+  color: var(--text);
   box-shadow: 0 4px 14px rgba(0,0,0,0.12);
   transition: transform 0.06s ease, background 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
-
-.history-card:hover {
-  background: rgba(0, 0, 0, 0.22);
-  border-color: rgba(255,255,255,0.26);
-}
-
 .history-card:active {
   transform: scale(0.98);
 }
-
-/* Header row inside mini-card */
 .history-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 6px;
 }
-
 .history-city {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
 }
-
 .history-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   flex: 0 0 auto;
 }
-
-/* Rows of details */
 .history-rows p {
-  margin: 3px 0;
+  margin: 2px 0;
   font-size: 13px;
   line-height: 1.25;
   opacity: 0.95;
 }
-
-
+/* ========== Enhancements (larger screens) ========== */
 @media (min-width: 480px) {
-  .card {
-    padding: 30px 20px;
-  }
-
-  .weather h1 {
-    font-size: 60px;
-  }
-
-  .weather h2 {
-    font-size: 35px;
-  }
-
+  .card { padding: 20px; gap: 18px; }
+  .weather-icon { width: 120px; margin-top: 16px; }
+  .weather .temp { font-size: 52px; }
+  .weather .city { font-size: 24px; }
   .details {
-    flex-direction: column;
-    gap: 20px;
+    gap: 14px;
   }
-
-  .col {
-    justify-content: center;
-  }
-
+  .col img { width: 32px; height: 32px; }
+  .humidity, .wind { font-size: 20px; }
+  .history-icon { width: 40px; height: 40px; }
 }
-
 @media (min-width: 768px) {
-  .card {
-    padding: 40px 35px;
-  }
-
-  .weather h1 {
-    font-size: 80px;
-  }
-
-  .weather h2 {
-    font-size: 45px;
-  }
-
+  body { place-items: center; } /* center card vertically on larger screens */
+  .card { padding: 28px; gap: 20px; }
+  /* put detail cards side by side on tablet+ if you prefer */
   .details {
     flex-direction: row;
-    gap: 0;
+    justify-content: space-between;
+    padding: 0 8px;
   }
-
-  .col {
-    justify-content: left;
+  .weather .temp { font-size: 72px; }
+  .weather .city { font-size: 32px; }
+  /* 3 mini-cards across for history */
+  .history-detailed {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
+  .history-city { font-size: 15px; }
+  .history-rows p { font-size: 13.5px; }
+}
+/* Optional: reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .history-card { transition: none; }
 }
